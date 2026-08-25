@@ -61,6 +61,12 @@ export function apply(ctx) {
     }))
   }
 
+  // One git index per worktree means concurrent checkpoints (parent session
+  // and subagents closing turns at the same time) must not race. Every
+  // snapshot is appended to a single promise chain; a failure is contained
+  // and can never poison later snapshots.
+  let queue = Promise.resolve()
+
   function checkpoint(agent, turnNumber) {
     const header = agent && agent.session && agent.session.header
     const workdir = header && header.cwd
@@ -69,7 +75,7 @@ export function apply(ctx) {
     const policy = policyFor(agent.session)
     const turn = Number(turnNumber) || 0
 
-    ;(async () => {
+    queue = queue.then(async () => {
       const probe = await run('test -d .git && echo yes || echo no', workdir, PROBE_TIMEOUT_MS, policy)
       if (probe.out.trim() !== 'yes') return // not a git repository: stay silent
 
@@ -88,6 +94,8 @@ export function apply(ctx) {
     })().catch((error) => {
       console.error('[turnsnap] ' + ((error && error.message) || error))
     })
+    // Contain the failure so the shared chain keeps working for later turns.
+    queue = queue.catch(() => {})
   }
 
   ctx.on('agent/turn-stopping', (payload) => {
