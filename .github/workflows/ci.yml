@@ -31,6 +31,9 @@ jobs:
             console.log('manifest ok:', manifest.name + '@' + manifest.version);
           "
 
+      - name: Git-sequence smoke test
+        run: node scripts/smoke.mjs
+
       - name: Patch inserts exactly one host-only row
         run: |
           node -e "
