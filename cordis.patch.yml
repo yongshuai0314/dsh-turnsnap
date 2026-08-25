@@ -1,0 +1,6 @@
+# TurnSnap bundle layer: mount the per-turn auto-checkpoint plugin
+# (dsh/index.js via the package root export). Host-only on purpose: no
+# browser half, nothing to approve, one HMR reload and it is live.
+- insert:
+    - id: turnsnap
+      name: dsh-turnsnap

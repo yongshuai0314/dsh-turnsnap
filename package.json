@@ -1,0 +1,35 @@
+{
+  "name": "dsh-turnsnap",
+  "version": "1.0.0",
+  "description": "Zero-config per-turn git checkpoints for DeepSeek Harness: every completed agent turn in a git workspace becomes one tagged [turnsnap] commit",
+  "type": "module",
+  "license": "MIT",
+  "files": [
+    "dsh",
+    "cordis.patch.yml",
+    "README.md",
+    "README.zh.md"
+  ],
+  "exports": {
+    ".": "./dsh/index.js",
+    "./package.json": "./package.json"
+  },
+  "keywords": [
+    "dsh",
+    "deepseek-harness",
+    "git",
+    "checkpoint",
+    "autosave",
+    "snapshot",
+    "rollback",
+    "dsh-plugin"
+  ],
+  "engines": {
+    "node": ">=20"
+  },
+  "dsh": {
+    "bundle": {
+      "patch": "./cordis.patch.yml"
+    }
+  }
+}
