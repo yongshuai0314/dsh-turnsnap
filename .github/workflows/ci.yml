@@ -1,0 +1,43 @@
+name: ci
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  sanity:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Entry parses as strict ESM
+        run: node --check dsh/index.js
+
+      - name: Manifest is valid JSON with a dsh.bundle patch
+        run: |
+          node -e "
+            const manifest = require('./package.json');
+            if (manifest.dsh?.bundle?.patch !== './cordis.patch.yml') {
+              throw new Error('dsh.bundle.patch must point at ./cordis.patch.yml');
+            }
+            if (manifest.exports?.['.'] !== './dsh/index.js') {
+              throw new Error('root export must be ./dsh/index.js');
+            }
+            console.log('manifest ok:', manifest.name + '@' + manifest.version);
+          "
+
+      - name: Patch inserts exactly one host-only row
+        run: |
+          node -e "
+            const fs = require('fs');
+            const text = fs.readFileSync('cordis.patch.yml', 'utf8');
+            if (!/- insert:/.test(text)) throw new Error('missing insert block');
+            if (!/id:\s*turnsnap/.test(text)) throw new Error('missing turnsnap row id');
+            if (!/name:\s*dsh-turnsnap/.test(text)) throw new Error('missing package name row');
+            console.log('patch ok');
+          "
