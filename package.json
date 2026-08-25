@@ -27,6 +27,10 @@
   "engines": {
     "node": ">=20"
   },
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/yongshuai0314/dsh-turnsnap.git"
+  },
   "dsh": {
     "bundle": {
       "patch": "./cordis.patch.yml"
