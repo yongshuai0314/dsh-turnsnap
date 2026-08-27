@@ -29,7 +29,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+ssh://git@github.com/yongshuai0314/dsh-turnsnap.git"
+    "url": "git+https://github.com/yongshuai0314/dsh-turnsnap.git"
   },
   "dsh": {
     "bundle": {
